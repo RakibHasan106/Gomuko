@@ -396,7 +396,7 @@ class Gomoku:
         
         lines = self.split_board_to_arrays(board)
         for line in lines : 
-            line_AI_score , line_human_score = self.evaluate_line(line)
+            line_human_score , line_AI_score = self.evaluate_line(line)
             AI_score += line_AI_score
             human_score += line_human_score
             
