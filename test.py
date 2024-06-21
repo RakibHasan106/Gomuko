@@ -1,0 +1,2 @@
+if 'human':
+    print("hello")

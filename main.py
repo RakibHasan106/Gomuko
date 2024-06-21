@@ -36,28 +36,6 @@ def draw_menu():
 def draw_game(game):
     game.draw_board(window)
     pygame.display.flip()
-    
-def check_winner(board, player):
-    for row in range(ROWS):
-        for col in range(COLS):
-            if check_five_in_a_row(board, player, row, col):
-                return True
-    return False
-
-def check_five_in_a_row(board, player, row, col):
-    # Check horizontally
-    if col <= COLS - 5 and all(board[row][c] == player for c in range(col, col + 5)):
-        return True
-    # Check vertically
-    if row <= ROWS - 5 and all(board[r][col] == player for r in range(row, row + 5)):
-        return True
-    # Check diagonal /
-    if row >= 4 and col <= COLS - 5 and all(board[row - i][col + i] == player for i in range(5)):
-        return True
-    # Check diagonal \
-    if row <= ROWS - 5 and col <= COLS - 5 and all(board[row + i][col + i] == player for i in range(5)):
-        return True
-    return False
 
 
 
@@ -70,9 +48,22 @@ def main():
     
     run = True
     clock = pygame.time.Clock()
+    
         
     while run:
         clock.tick(FPS)
+        
+        if game and gomoku_game.current_player == 'AI':
+            r, c = gomoku_game.ai_move()
+            gomoku_game.make_move(r,c)
+            gomoku_game.moves.append((r,c))
+            gomoku_game.current_player = 'human'
+            print("Currently AI move")
+            if gomoku_game.game_over(gomoku_game.board):
+                print(f"{gomoku_game.current_player} wins!")
+                run = False
+            print(f"printing the AI's row,col position : row:{r} col:{c}")
+            print("AI has given it's move....Now it's turn for human")
         
         
         for event in pygame.event.get():
@@ -87,23 +78,16 @@ def main():
                     """This button will exit the user fronm the game """
                     """There could be some other buttons which will allow user to use different difficulty modes."""
                     pass
-                elif game and gomoku_game.current_player == 'human':
+                elif game and gomoku_game.current_player == 'human':    
                     x,y = event.pos
                     row,col = y // SQUARE_SIZE, x // SQUARE_SIZE
                     if gomoku_game.make_move(row,col):
-                        gomoku_game.moves+=1
-                        if gomoku_game.check_winner():
+                        gomoku_game.moves.append((row,col))
+                        
+                        if gomoku_game.game_over(gomoku_game.board):
                             print(f"{gomoku_game.current_player} wins!")
-                            pass
-                # pass
-        if game and gomoku_game.current_player == 'AI':
-            gomoku_game.ai_move()
-            gomoku_game.moves+=1
-            gomoku_game.current_player = 'human'
-            print("Currently AI move")
-            if gomoku_game.check_winner():
-                print(f"{gomoku_game.current_player} wins!")
-                run = False
+        
+        
                 
         if menu:
             draw_menu()
